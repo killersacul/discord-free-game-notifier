@@ -19,8 +19,6 @@ from discord_free_game_notifier.steam_json import scrape_steam_json
 from discord_free_game_notifier.ubisoft import get_ubisoft_free_games
 from discord_free_game_notifier.webhook import send_embed_webhook, send_webhook
 
-from discord_free_game_notifier import settings
-
 if TYPE_CHECKING:
     from discord_webhook import DiscordEmbed
     from requests import Response
