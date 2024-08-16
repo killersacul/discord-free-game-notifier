@@ -19,6 +19,8 @@ from discord_free_game_notifier.steam_json import scrape_steam_json
 from discord_free_game_notifier.ubisoft import get_ubisoft_free_games
 from discord_free_game_notifier.webhook import send_embed_webhook, send_webhook
 
+from discord_free_game_notifier import settings
+
 if TYPE_CHECKING:
     from discord_webhook import DiscordEmbed
     from requests import Response
@@ -54,13 +56,15 @@ def check_free_games() -> None:  # noqa: C901, PLR0912
     """Check for free games on Epic, Steam, GOG and Ubisoft and send them to Discord."""
     logger.info("Checking for free games")
 
-    try:
-        for game in get_free_epic_games():
-            send_games(game, "Epic")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking Epic for free games: {e}"
-        logger.error(msg)
+    if settings.webhook_url or settings.epic_webhook:
+        try:
+            for game in get_free_epic_games():
+                send_games(game, "Epic")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking Epic for free games: {e}"
+            logger.error(msg)
 
+    if settings.webhook_url or settings.steam_webhook:
     try:
         for game in get_free_steam_games():
             send_games(game, "Steam")
@@ -68,40 +72,45 @@ def check_free_games() -> None:  # noqa: C901, PLR0912
         msg: str = f"Error when checking Steam for free games: {e}"
         logger.error(msg)
 
-    try:
-        for game in get_free_gog_game_from_store():
-            send_games(game, "GOG")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking GOG (search page) for free games: {e}"
-        logger.error(msg)
+    if settings.webhook_url or settings.gog_webhook:
+        try:
+            for game in get_free_gog_game_from_store():
+                send_games(game, "GOG")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking GOG (search page) for free games: {e}"
+            logger.error(msg)
 
-    try:
-        if gog_embed := get_free_gog_game():
-            send_games(gog_embed, "GOG")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking GOG (front page) free games: {e}"
-        logger.error(msg)
+    if settings.webhook_url or settings.gog_webhook:
+        try:
+            if gog_embed := get_free_gog_game():
+                send_games(gog_embed, "GOG")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking GOG (front page) free games: {e}"
+            logger.error(msg)
 
-    try:
-        for game in get_ubisoft_free_games():
-            send_games(game, "Ubisoft")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking Ubisoft for free games: {e}"
-        logger.error(msg)
+    if settings.webhook_url or settings.ubisoft_webhook:
+        try:
+            for game in get_ubisoft_free_games():
+                send_games(game, "Ubisoft")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking Ubisoft for free games: {e}"
+            logger.error(msg)
 
-    try:
-        for game in scrape_epic_json():
-            send_games(game, "Epic")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking Epic (JSON) for free games: {e}"
-        logger.error(msg)
+    if settings.webhook_url or settings.epic_webhook:
+        try:
+            for game in scrape_epic_json():
+                send_games(game, "Epic")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking Epic (JSON) for free games: {e}"
+            logger.error(msg)
 
-    try:
-        for game in scrape_steam_json():
-            send_games(game, "Steam")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking Steam (JSON) for free games: {e}"
-        logger.error(msg)
+    if settings.webhook_url or settings.steam_webhook:
+        try:
+            for game in scrape_steam_json():
+                send_games(game, "Steam")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking Steam (JSON) for free games: {e}"
+            logger.error(msg)
 
 
 def main() -> None:
