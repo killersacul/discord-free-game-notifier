@@ -65,12 +65,12 @@ def check_free_games() -> None:  # noqa: C901, PLR0912
             logger.error(msg)
 
     if settings.webhook_url or settings.steam_webhook:
-    try:
-        for game in get_free_steam_games():
-            send_games(game, "Steam")
-    except Exception as e:  # noqa: BLE001
-        msg: str = f"Error when checking Steam for free games: {e}"
-        logger.error(msg)
+        try:
+            for game in get_free_steam_games():
+                send_games(game, "Steam")
+        except Exception as e:  # noqa: BLE001
+            msg: str = f"Error when checking Steam for free games: {e}"
+            logger.error(msg)
 
     if settings.webhook_url or settings.gog_webhook:
         try:
